@@ -1,5 +1,8 @@
 package com.lynn.message_demo.config;
 
+import com.baomidou.mybatisplus.autoconfigure.ConfigurationCustomizer;
+import com.lynn.message_demo.handler.JsonbTypeHandler;
+import com.lynn.message_demo.handler.LongToTimestampTypeHandler;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.type.InstantTypeHandler;

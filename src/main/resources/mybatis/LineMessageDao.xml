@@ -5,6 +5,31 @@
     <select id="findAll" resultType="com.lynn.message_demo.vo.LineMessageVo">
         SELECT * FROM line_message
     </select>
+<!--    <resultMap id="msgWithAccount" type="com.lynn.message_demo.vo.LineMessageVo">-->
+<!--        <association property="lineAccountVo" javaType="com.lynn.message_demo.vo.LineAccountVo">-->
+<!--            <id property="acNum" column="AC_NUM"/>-->
+<!--        </association>-->
+<!--    </resultMap>-->
+    <resultMap id="msgWithAccount" type="com.lynn.message_demo.vo.LineMessageVo">
+        <result column="line_Uniq_Num" property="lineUniqNum"/>
+        <result column="msg_Dt_Num" property="msgDtNum"/>
+        <result column="message" property="message"/>
+        <result column="quote_Token" property="quoteToken"/>
+        <result column="message_Id" property="messageId"/>
+        <result column="ac_Num" property="acNum"/>
+        <result column="create_Timestamp" property="createTimestamp" typeHandler="com.lynn.message_demo.handler.LongToTimestampTypeHandler"/>
+
+        <association property="lineAccountVo" javaType="com.lynn.message_demo.vo.LineAccountVo">
+            <result column="accountAcNum" property="acNum"/>
+        </association>
+    </resultMap>
+
+
+    <select id="findMsgByAccount" resultMap="msgWithAccount">
+        SELECT * FROM LINE_MESSAGE LM
+        INNER JOIN LINE_ACCOUNT LA ON LA.AC_NUM = LM.AC_NUM
+        WHERE LA.AC_NUM = #{acNum}
+    </select>
 
 
 </mapper>

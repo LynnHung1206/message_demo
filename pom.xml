@@ -98,13 +98,28 @@
 			<artifactId>jackson-annotations</artifactId>
 			<version>2.17.2</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/com.linecorp.bot/line-bot-model -->
+		<!-- https://mvnrepository.com/artifact/com.linecorp.bot/line-bot-spring-boot-client -->
 		<dependency>
 			<groupId>com.linecorp.bot</groupId>
-			<artifactId>line-bot-model</artifactId>
-			<version>6.0.0</version>
+			<artifactId>line-bot-spring-boot-client</artifactId>
+			<version>9.3.1</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.linecorp.bot/line-bot-spring-boot-webmvc -->
+		<dependency>
+			<groupId>com.linecorp.bot</groupId>
+			<artifactId>line-bot-spring-boot-webmvc</artifactId>
+			<version>9.3.1</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/com.linecorp.bot/line-bot-parser -->
+		<dependency>
+			<groupId>com.linecorp.bot</groupId>
+			<artifactId>line-bot-parser</artifactId>
+			<version>9.3.1</version>
+		</dependency>
+
 	</dependencies>
+
 
 	<build>
 		<plugins>

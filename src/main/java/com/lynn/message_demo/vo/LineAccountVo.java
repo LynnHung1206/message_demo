@@ -21,4 +21,5 @@ public class LineAccountVo {
   private String authorizationToken;
 
   private String isActive;
+
 }
