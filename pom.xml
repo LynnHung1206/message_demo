@@ -123,6 +123,14 @@
 			<version>9.3.1</version>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/com.linecorp.bot/line-bot-messaging-api-client -->
+		<dependency>
+			<groupId>com.linecorp.bot</groupId>
+			<artifactId>line-bot-messaging-api-client</artifactId>
+			<version>9.4.0</version>
+		</dependency>
+
+
 	</dependencies>
 
 
