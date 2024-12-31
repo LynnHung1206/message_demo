@@ -2,8 +2,11 @@ package com.lynn.message_demo.controller;
 
 import com.linecorp.bot.client.base.Result;
 import com.linecorp.bot.messaging.client.MessagingApiClient;
+import com.linecorp.bot.messaging.client.MessagingApiClientException;
+import com.linecorp.bot.messaging.model.ErrorDetail;
 import com.linecorp.bot.messaging.model.PushMessageRequest;
 import com.linecorp.bot.messaging.model.PushMessageResponse;
+import com.linecorp.bot.messaging.model.SentMessage;
 import com.linecorp.bot.messaging.model.TextMessage;
 import com.lynn.message_demo.properties.SelfLineProperties;
 import io.lettuce.core.api.push.PushMessage;
@@ -14,7 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletionException;
 
 /**
  * @Author: Lynn on 2024/12/31
@@ -28,18 +33,33 @@ public class SendOutController {
 
   @GetMapping("/send")
   public void send() {
-    TextMessage textMessage = new TextMessage
-        .Builder("hi hi")
-        .build();
-    PushMessageRequest messageRequest = new PushMessageRequest.Builder(selfLineProperties.getToken(), Collections.singletonList(textMessage))
-        .build();
-    MessagingApiClient apiClient = MessagingApiClient.builder(selfLineProperties.getAuth()).build();
-    Result<PushMessageResponse> join = apiClient.pushMessage(UUID.randomUUID(), messageRequest).join();
-    log.info("join={}", join);
-    PushMessageResponse body = join.body();
-    body.sentMessages().forEach(s->{
-      String quoteToken = s.quoteToken();
-      String id = s.id();
-    });
+    try {
+      TextMessage textMessage = new TextMessage
+          .Builder("hi hi")
+          .build();
+      PushMessageRequest messageRequest = new PushMessageRequest.Builder(selfLineProperties.getToken(), Collections.singletonList(textMessage))
+          .build();
+      MessagingApiClient apiClient = MessagingApiClient.builder(selfLineProperties.getAuth()).build();
+      Result<PushMessageResponse> join = apiClient.pushMessage(UUID.randomUUID(), messageRequest).join();
+      log.info("join={}", join);
+      PushMessageResponse body = join.body();
+      body.sentMessages().forEach(s -> {
+        String quoteToken = s.quoteToken();
+        String id = s.id();
+      });
+    } catch (CompletionException e) {
+      Throwable cause = e.getCause();
+      if (cause instanceof MessagingApiClientException) {
+        MessagingApiClientException c = (MessagingApiClientException) cause;
+        String error = c.getError();
+        System.out.println("error = " + error);
+      }else {
+        log.error("", e);
+      }
+    } catch (Exception e) {
+      log.error("", e);
+    }
+
   }
+
 }
