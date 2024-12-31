@@ -9,6 +9,7 @@ import com.linecorp.bot.messaging.model.PushMessageResponse;
 import com.linecorp.bot.messaging.model.SentMessage;
 import com.linecorp.bot.messaging.model.TextMessage;
 import com.lynn.message_demo.properties.SelfLineProperties;
+import com.lynn.message_demo.service.SendOutService;
 import io.lettuce.core.api.push.PushMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,39 +28,16 @@ import java.util.concurrent.CompletionException;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
+@RequestMapping("/send")
 public class SendOutController {
 
-  private final SelfLineProperties selfLineProperties;
 
-  @GetMapping("/send")
+  private final SendOutService sendOutService;
+
+  @GetMapping("/text")
   public void send() {
-    try {
-      TextMessage textMessage = new TextMessage
-          .Builder("hi hi")
-          .build();
-      PushMessageRequest messageRequest = new PushMessageRequest.Builder(selfLineProperties.getToken(), Collections.singletonList(textMessage))
-          .build();
-      MessagingApiClient apiClient = MessagingApiClient.builder(selfLineProperties.getAuth()).build();
-      Result<PushMessageResponse> join = apiClient.pushMessage(UUID.randomUUID(), messageRequest).join();
-      log.info("join={}", join);
-      PushMessageResponse body = join.body();
-      body.sentMessages().forEach(s -> {
-        String quoteToken = s.quoteToken();
-        String id = s.id();
-      });
-    } catch (CompletionException e) {
-      Throwable cause = e.getCause();
-      if (cause instanceof MessagingApiClientException) {
-        MessagingApiClientException c = (MessagingApiClientException) cause;
-        String error = c.getError();
-        System.out.println("error = " + error);
-      }else {
-        log.error("", e);
-      }
-    } catch (Exception e) {
-      log.error("", e);
-    }
-
+    sendOutService.send();
   }
+
 
 }

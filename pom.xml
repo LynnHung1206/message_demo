@@ -107,20 +107,20 @@
 		<dependency>
 			<groupId>com.linecorp.bot</groupId>
 			<artifactId>line-bot-spring-boot-client</artifactId>
-			<version>9.3.1</version>
+			<version>9.4.0</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.linecorp.bot/line-bot-spring-boot-webmvc -->
 		<dependency>
 			<groupId>com.linecorp.bot</groupId>
 			<artifactId>line-bot-spring-boot-webmvc</artifactId>
-			<version>9.3.1</version>
+			<version>9.4.0</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/com.linecorp.bot/line-bot-parser -->
 		<dependency>
 			<groupId>com.linecorp.bot</groupId>
 			<artifactId>line-bot-parser</artifactId>
-			<version>9.3.1</version>
+			<version>9.4.0</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/com.linecorp.bot/line-bot-messaging-api-client -->
