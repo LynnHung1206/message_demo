@@ -36,5 +36,10 @@ public class SendOutController {
     MessagingApiClient apiClient = MessagingApiClient.builder(selfLineProperties.getAuth()).build();
     Result<PushMessageResponse> join = apiClient.pushMessage(UUID.randomUUID(), messageRequest).join();
     log.info("join={}", join);
+    PushMessageResponse body = join.body();
+    body.sentMessages().forEach(s->{
+      String quoteToken = s.quoteToken();
+      String id = s.id();
+    });
   }
 }
