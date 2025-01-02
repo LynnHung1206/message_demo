@@ -32,7 +32,7 @@ public class TracingInterceptor implements HandlerInterceptor {
   public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
     Span span = (Span) request.getAttribute("span");
     if (ex != null) {
-      span.recordException(ex).setStatus(StatusCode.ERROR,"request method %s failed");
+      span.recordException(ex).setStatus(StatusCode.ERROR, String.format("request method %s failed", ex.getMessage()));
     }
     if (span != null) {
       span.end();
