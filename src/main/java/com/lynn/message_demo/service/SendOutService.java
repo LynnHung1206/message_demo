@@ -1,5 +1,6 @@
 package com.lynn.message_demo.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.linecorp.bot.client.base.Result;
 import com.linecorp.bot.messaging.client.MessagingApiClient;
 import com.linecorp.bot.messaging.client.MessagingApiClientException;
@@ -13,15 +14,21 @@ import com.linecorp.bot.messaging.model.Sender;
 import com.linecorp.bot.messaging.model.StickerMessage;
 import com.linecorp.bot.messaging.model.TextMessage;
 import com.linecorp.bot.messaging.model.VideoMessage;
+import com.lynn.message_demo.dao.LineMessageDao;
 import com.lynn.message_demo.properties.SelfLineProperties;
+import com.lynn.message_demo.util.DaoValidationUtil;
+import com.lynn.message_demo.vo.LineMessageVo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.MapUtils;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
-import java.util.Collection;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletionException;
 
@@ -36,10 +43,14 @@ public class SendOutService {
 
   private final SelfLineProperties selfLineProperties;
 
+  private final ObjectMapper lineObjectMapper;
 
-  public void send() {
-    String text = "你好給約ㄇ";
-    String senderName = "Lynnnnnnn";
+  private final LineMessageDao lineMessageDao;
+
+
+  public void sendText(Map<String,Object> param) {
+    String text = MapUtils.getString(param, "text");
+    String senderName = MapUtils.getString(param, "senderName");
     Message textMessage = this.genLineTextMessage(text, senderName);
     PushMessageRequest pushMessageRequest = this.genPushMessage(selfLineProperties.getToken(), Collections.singletonList(textMessage));
     MessagingApiClient apiClient = MessagingApiClient.builder(selfLineProperties.getAuth()).build();
@@ -47,8 +58,19 @@ public class SendOutService {
       Result<PushMessageResponse> responseResult = apiClient.pushMessage(UUID.randomUUID(), pushMessageRequest).join();
       PushMessageResponse response = responseResult.body();
       response.sentMessages().forEach(sentMessage -> {
-        String quoteToken = sentMessage.quoteToken();
-        String id = sentMessage.id();
+        try {
+          String quoteToken = sentMessage.quoteToken();
+          String id = sentMessage.id();
+          LineMessageVo lineMessageVo = new LineMessageVo();
+          lineMessageVo.setMessage(lineObjectMapper.writeValueAsString(textMessage));
+          lineMessageVo.setMessageId(id);
+          lineMessageVo.setQuoteToken(quoteToken);
+          lineMessageVo.setCreateTimestamp(Timestamp.from(Instant.now()).getTime());
+          lineMessageVo.setAcNum(1L);
+          DaoValidationUtil.validateResultIsOne(() -> lineMessageDao.insert(lineMessageVo));
+        } catch (Exception e) {
+          log.error("", e);
+        }
       });
     } catch (CompletionException e) {
       Throwable cause = e.getCause();
