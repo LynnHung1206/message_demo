@@ -42,6 +42,9 @@ public class TextMessageActionTest {
   @InjectMocks
   private TextMessageAction textMessageAction;
 
+  @Spy
+  private ObjectMapper lineObjectMapper = new ObjectMapper();
+
 
   private LineInDto lineInDto;
   private MessageEvent messageEvent;
