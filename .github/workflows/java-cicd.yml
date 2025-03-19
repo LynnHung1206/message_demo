@@ -33,6 +33,25 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
         cache: maven
+
+    - name: Install PostgreSQL client
+      run: sudo apt-get update && sudo apt-get install -y postgresql-client
+        
+    - name: Initialize Database
+      run: |
+        # 等待 PostgreSQL 完全準備好
+        sleep 5
+        # 如果您有單獨的初始化 SQL 文件
+        if [ -f src/main/resources/schema.sql ]; then
+          PGPASSWORD=postgres psql -h localhost -U postgres -d test -f src/main/resources/schema.sql
+        fi
+        if [ -f src/main/resources/data.sql ]; then
+          PGPASSWORD=postgres psql -h localhost -U postgres -d test -f src/main/resources/data.sql
+        fi
+        # 或者如果您有單個初始化文件
+        if [ -f src/main/resources/init.sql ]; then
+          PGPASSWORD=postgres psql -h localhost -U postgres -d test -f src/main/resources/init.sql
+        fi
     
     - name: Build with Maven
       run: mvn -B package --file pom.xml
