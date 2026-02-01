@@ -6,22 +6,24 @@ receivers:
       http:
         endpoint: 0.0.0.0:55681
 
-
 processors:
   batch:
     timeout: 10s
     send_batch_size: 1000
 
-
 exporters:
-  otlp:
+  # 輸出到 Jaeger
+  otlp/jaeger:
     endpoint: "jaeger:4317"
     tls:
       insecure: true
+  # Debug 輸出到 console（開發時可用）
+  debug:
+    verbosity: basic
 
 service:
   pipelines:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlp]
+      exporters: [otlp/jaeger, debug]

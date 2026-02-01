@@ -38,3 +38,6 @@ build/
 .vscode/
 
 .DS_Store
+
+### OpenTelemetry ###
+opentelemetry-javaagent.jar

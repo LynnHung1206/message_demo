@@ -18,13 +18,33 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 
 /**
+ * LINE 事件處理執行器 - 策略模式 (Strategy Pattern)
+ *
+ * <p>使用 Spring 的 Map 自動注入功能，將所有 {@link LineEventAction} 的實現類注入到 Map 中：
+ * <ul>
+ *   <li>Key = Bean 名稱（由 @Service 指定，需與 {@link LineEventActionType} 常量一致）</li>
+ *   <li>Value = Bean 實例</li>
+ * </ul>
+ *
+ * <p>執行流程：
+ * <ol>
+ *   <li>根據 Event 類型設定 lineEventType</li>
+ *   <li>從 Map 中取得對應的 Action 並執行</li>
+ * </ol>
+ *
  * @Author: Lynn on 2024/11/28
+ * @see LineEventAction
+ * @see LineEventActionType
  */
 @RequiredArgsConstructor
 @Service
 @Slf4j
 public class LineEventActionExecutor {
 
+  /**
+   * Spring 自動注入所有 LineEventAction 實現類
+   * 例如：{"MESSAGE_EVENT" -> MessageEventAction, "FOLLOW_EVENT" -> FollowEventAction, ...}
+   */
   private final Map<String, LineEventAction> lineEventActionMap;
 
   public void execEventProcess(LineInDto lineInDto){

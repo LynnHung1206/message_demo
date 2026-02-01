@@ -16,12 +16,32 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 
 /**
+ * LINE 訊息處理執行器 - 策略模式 (Strategy Pattern)
+ *
+ * <p>使用 Spring 的 Map 自動注入功能，將所有 {@link LineMessageAction} 的實現類注入到 Map 中：
+ * <ul>
+ *   <li>Key = Bean 名稱（由 @Service 指定，需與 {@link LineMessageActionType} 常量一致）</li>
+ *   <li>Value = Bean 實例</li>
+ * </ul>
+ *
+ * <p>執行流程：
+ * <ol>
+ *   <li>根據 MessageContent 類型設定 lineMessageType</li>
+ *   <li>從 Map 中取得對應的 Action 並執行</li>
+ * </ol>
+ *
  * @Author: Lynn on 2024/11/28
+ * @see LineMessageAction
+ * @see LineMessageActionType
  */
 @RequiredArgsConstructor
 @Service
 public class LineMessageActionExecutor {
 
+  /**
+   * Spring 自動注入所有 LineMessageAction 實現類
+   * 例如：{"TEXT_MESSAGE" -> TextMessageAction, "IMAGE_MESSAGE" -> ImageMessageAction, ...}
+   */
   private final Map<String, LineMessageAction> lineMessageActionMap;
 
   public void execMessageProcess(LineInDto lineInDto){

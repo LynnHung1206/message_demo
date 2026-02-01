@@ -1,5 +1,53 @@
 #version: "3"
 services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mysql:
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: message_demo
+      MYSQL_USER: lynn
+      MYSQL_PASSWORD: lynn
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./init:/docker-entrypoint-initdb.d  # 啟動時自動執行 init 目錄下的 SQL
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  postgres:
+    image: postgres:16-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   otel-collector:
     image: otel/opentelemetry-collector-contrib:latest
     ports:
@@ -18,11 +66,33 @@ services:
   jaeger:
     image: jaegertracing/all-in-one:latest
     ports:
-          - "16686:16686" # UI
-          - "14250:14250" # gRPC
-          - "4320:4320"   # OTLP gRPC
+      - "16686:16686" # UI
+      - "14250:14250" # gRPC
+      - "4320:4320"   # OTLP gRPC
     environment:
-          - COLLECTOR_OTLP_ENABLED=true
-          - COLLECTOR_OTLP_GRPC_ENDPOINT=0.0.0.0:4320
+      - COLLECTOR_OTLP_ENABLED=true
+      - COLLECTOR_OTLP_GRPC_ENDPOINT=0.0.0.0:4320
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    ports:
+      - "5672:5672"   # AMQP
+      - "15672:15672" # Management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_running"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  redis-data:
+  mysql-data:
+  postgres-data:
+  rabbitmq-data:
 
 

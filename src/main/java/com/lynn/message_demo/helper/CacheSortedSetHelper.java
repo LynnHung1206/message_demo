@@ -9,7 +9,30 @@ import org.springframework.stereotype.Service;
 import java.util.Set;
 
 /**
+ * Redis Sorted Set (ZSet) 操作工具類
+ *
+ * <p>ZSet 是 Redis 的有序集合，每個元素都關聯一個 score（分數），元素按 score 排序。
+ *
+ * <h3>適用場景：</h3>
+ * <ul>
+ *   <li><b>排行榜</b> - score 為分數，自動按分數排序</li>
+ *   <li><b>時間序列資料</b> - score 為 timestamp，可按時間範圍查詢</li>
+ *   <li><b>延遲隊列</b> - score 為執行時間，輪詢取出到期任務</li>
+ *   <li><b>優先級隊列</b> - score 為優先級，高優先級先處理</li>
+ * </ul>
+ *
+ * <h3>使用範例：</h3>
+ * <pre>
+ * // 排行榜：記錄用戶分數
+ * cacheSortedSetHelper.add("leaderboard", "user123", 1500.0);
+ *
+ * // 取得排行榜前 10 名（分數高到低）
+ * Set&lt;Object&gt; top10 = cacheSortedSetHelper.getAllDataDesc("leaderboard");
+ * </pre>
+ *
  * @Author: Lynn on 2024/12/2
+ * @see RedisTemplate
+ * @see org.springframework.data.redis.core.ZSetOperations
  */
 @Service
 @Slf4j
